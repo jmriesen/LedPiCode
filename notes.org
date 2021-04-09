@@ -1,0 +1,25 @@
+* TODO I will then need to make a thread for the update method.
+  I think I will make an update method first (I may have already
+* TODO create enum that supports dimming.
+  Kind off. it lowers the value by 50 percent but is not a smooth transition.
+* DONE Move the enum parcing to the light group code.
+  CLOSED: [2021-02-27 Sat 16:36]
+  
+* DONE Implement the next method for the enumes.
+  CLOSED: [2021-02-27 Sat 16:36]
+  Commands represent how to change state not current state.
+  They can contain addtional state if they want to.
+  Takes in a color and self(not reference I want it to be destryed) returns next color and next command.
+* DONE Convert over the api for the manager
+  CLOSED: [2021-02-27 Sat 16:36]
+  I could make the manager a singleton class however I don't like singletons.
+  However then I want to make sure that the lights in a light group only contain lights that that manager controls.
+  I think I will try and accomplish this with associated types.
+  If I use associated types and do this I don't think I need to store the lights that the manager controls.
+  I may want to eventually but if I move over the new method I should be able to make those changes later on.
+  
+  Then the new light and new light group will be methods of a manager.
+  I am not mocking up the pins so I don't think there is any need to thing about mocking up any of theses states.
+  
+  The light groups don't need to be wrapped in a arc I will just return a reference to a mutex.
+
