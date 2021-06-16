@@ -2,17 +2,7 @@ import React, {useState} from 'react';
 import {StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import CheckBox from 'react-native-check-box';
 import ToggleSwitch from 'toggle-switch-react-native';
-//Ok some quick thoughts I don't what state fullness to leak over from the back end to the front end however I am ok with there being state fullness in total.
-//OK I have some problems with separation of consurenes right now.
-
-//I want to be able store state in the front end a bit now witch is not what I have done before.
-
-//I think that I will have to move away from props and to state fullness.
-//I will then have to be able to update without removing everything.
-//I think that will also solve my dirtying problem as I will only be refreshing the light groups not everything.
 const Task = (props) =>{
-    //toggle state i need to figure out how to propagate change down.
-    //I think I might ge able to put the actual views in the state.
     const [light,setlight] = useState(props.data);
     const [selected,setSelected] = useState(false);
     const [color,setColor] = useState(props.data.pattern.Constent.target);

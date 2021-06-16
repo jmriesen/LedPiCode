@@ -4,7 +4,6 @@ import { KeyboardAvoidingView, FlatList, StyleSheet, Text, View, TextInput, Touc
 import Task from './components/Task';
 import { ColorPicker,fromHsv } from 'react-native-color-picker';
 export default class App extends Component {
-    //export default function App() {
     state = {
         taskItems: [],
         color: null,
@@ -29,8 +28,6 @@ export default class App extends Component {
               <ColorPicker
                 onColorSelected={
                     color =>{
-                        //color = fromHsv(color).substring(1);
-                        //color:uint = uint("0x" + color);
                         this.setState({ color:fromHsv(color)+"ff"});
                     }
                 }
