@@ -99,6 +99,7 @@ impl <Manager>LightGroup<Manager>{
         self.last_updated = Instant::now();
     }
     pub fn set(&mut self,pattern:Pattern){
+        println!("{:?}",pattern);
         self.pattern = pattern;
         self.instruction_start_time=  Instant::now();
     }
