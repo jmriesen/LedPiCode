@@ -1,4 +1,3 @@
-pub use super::strip::Strip;
 
 #[cfg(test)]
 mod tests;

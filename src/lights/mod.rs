@@ -1,5 +1,3 @@
-pub mod color;
-pub use color::Color;
 pub mod strip;
 pub use strip::Strip;
 
@@ -10,8 +8,8 @@ pub use light_group::LightGroup;
 pub mod light_manager;
 pub use light_manager::LightManager;
 
-pub mod controler;
-pub use controler::RocketManager;
+mod commands;
+mod manager;
 
 /*
 use serde::{Serialize, Deserialize};

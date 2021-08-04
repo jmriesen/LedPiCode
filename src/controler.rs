@@ -4,7 +4,7 @@ use rocket::State;
 use std::sync::Arc;
 
 use std::sync::Mutex;
-use super::{
+use crate::lights::{
     light_group::Status,
     light_group::Pattern,
     LightManager

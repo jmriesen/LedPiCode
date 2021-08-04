@@ -43,11 +43,11 @@ fn custome_color(){
 }
 
 #[test]
-fn AQUAMARINE_should_serialize(){
+fn aquamarine_should_serialize(){
     assert_eq!(serde_json::to_string(&AQUAMARINE).unwrap(),String::from("\"#7fffd4ff\""));
 }
 
 #[test]
-fn AQUAMARINE_should_deserialize(){
+fn aquamarine_should_deserialize(){
     assert_eq!(serde_json::from_str::<Color>("\"#7fffd4ff\"").unwrap(), AQUAMARINE);
 }

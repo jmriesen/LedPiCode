@@ -1,6 +1,7 @@
 use std::marker::PhantomData;
 use std::error::Error;
-use super::color::{Color};
+use std::sync::{Arc, Mutex};
+use crate::color::{Color};
 pub type PinConfig = (u8,u8,u8);
 
 pub trait Controls{
@@ -14,25 +15,41 @@ pub use mock::*;
 #[cfg(not(test))]
 pub use hardware::*;
 
+pub struct MockPhantom;
 #[cfg(test)]
 mod mock{
     use super::*;
+    use crate::color::{Color,BLACK};
     pub struct Strip<Manager> {
+        color:Arc<Mutex<Color>>,
         phantom:PhantomData<Manager>,
     }
 
     pub fn new<Manager>((_red,_green,_blue):PinConfig)->Result<Strip<Manager>,Box<dyn Error>>{
         Ok(Strip{
             phantom:PhantomData,
+            color:Arc::new(Mutex::new(BLACK)),
         })
     }
 
     impl <Manager>Controls for Strip<Manager>{
-        fn set(&mut self,_color:Color){
+        fn set(&mut self,color:Color){
+            let mut c = self.color.lock().unwrap();
+            *c = color;
         }
 
         fn refresh(&mut self)->Result<(),Box<dyn Error>>{
             Ok(())
+        }
+    }
+    impl Strip<MockPhantom>{
+        pub fn mock()->(Self,Arc<Mutex<Color>>){
+            let strip = new((0,0,0)).unwrap();
+            let internal = strip.color.clone();
+            (strip,internal)
+        }
+        pub fn color(&self)->Color{
+            *self.color.lock().unwrap()
         }
     }
 }

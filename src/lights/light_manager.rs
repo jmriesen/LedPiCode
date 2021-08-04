@@ -4,11 +4,11 @@ use std::sync::Mutex;
 use std::marker::PhantomData;
 
 use std::{thread, time};
+use crate::color::BLACK;
 use super::{
     light_group::{self,LightGroup},
     Strip,
     strip::{self,PinConfig,Controls},
-    color::BLACK,
 };
 
 

@@ -5,8 +5,8 @@ use std::time::Duration;
 use std::marker::PhantomData;
 use serde::{Serialize, Deserialize};
 use std::time::Instant;
+use crate::color::Color;
 use super::{
-    Color,
     strip::Strip,
     strip::Controls,
 };
@@ -20,8 +20,8 @@ pub struct Status{
 
 #[derive(Default,Debug, Serialize, Deserialize,Clone)]
 pub struct Instruction{
-    target:Color,
-    fade_time:Duration,
+    pub target:Color,
+    pub fade_time:Duration,
 }
 
 impl Instruction{
@@ -40,6 +40,11 @@ pub enum Pattern{
     Constent(Instruction),
     Loop(usize,Vec<(Duration,Instruction)>),
     //Possible addition RunOnce(Vec<CommandAtoms>),
+}
+impl Pattern{
+    pub fn constant(color:Color)->Self{
+        Pattern::Constent(Instruction{target:color,fade_time:Default::default()})
+    }
 }
 
 
