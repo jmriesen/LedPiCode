@@ -1,24 +1,23 @@
 use super::*;
 use std::time::Duration;
 use crate::time::mock::{MockTimeHandle,new_mock_time_source};
-use crate::lights::strip::MockPhantom;
 fn setup()->
-    (MockTimeHandle, Arc<Mutex<Color>>, Arc<Mutex<Manager<MockPhantom,MockTimeHandle>>>){
-        let (light,internal) = Strip::mock();
+    (MockTimeHandle, Light, Arc<Mutex<Manager<MockTimeHandle>>>){
+        let light = Light::mock();
         let time_handle = new_mock_time_source();
         let mut lights = HashMap::default();
-        lights.insert(String::from("name"),light);
+        lights.insert(String::from("name"),light.clone());
         let manager = Manager::new(lights,time_handle.clone());
-        (time_handle, internal, manager)
+        (time_handle, light, manager)
     }
 
 #[test]
 fn lights_should_change_to_initial_color(){
-    let (time, internal, manager) = setup();
+    let (time, light, manager) = setup();
     let pattern = Pattern::Constent(RED);
     assert_eq!(manager.lock().unwrap().command("name",pattern),Ok(()));
     time.advance(Duration::new(1, 0));
-    assert_eq!(*internal.lock().unwrap(),RED);
+    assert_eq!(light.color(),RED);
 }
 
 #[test]
@@ -30,14 +29,13 @@ fn invalid_name_should_be_repored(){
 
 #[test]
 fn when_time_advances_color_advances(){
-    let (time, internal, manager) = setup();
-    let check_color = || {*internal.lock().unwrap()};
+    let (time, light, manager) = setup();
 
     let pattern = Pattern::EvenCycle(vec![RED,BLUE,GREEN],Duration::new(2, 0));
     assert_eq!(manager.lock().unwrap().command("name",pattern),Ok(()));
-    assert_eq!(check_color(),RED);
+    assert_eq!(light.color(), RED);
     time.advance(Duration::new(2, 0));
-    assert_eq!(check_color(),BLUE);
+    assert_eq!(light.color(), BLUE);
     time.advance(Duration::new(2, 0));
-    assert_eq!(check_color(),GREEN);
+    assert_eq!(light.color(), GREEN);
 }

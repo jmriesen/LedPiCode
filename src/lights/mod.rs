@@ -1,12 +1,12 @@
 pub mod strip;
 pub use strip::Strip;
 
-pub mod light_group;
-pub use light_group::LightGroup;
+//pub mod light_group;
+//pub use light_group::LightGroup;
 
 //pub use light_group::LightGroup;
-pub mod light_manager;
-pub use light_manager::LightManager;
+//pub mod light_manager;
+//pub use light_manager::LightManager;
 
 mod commands;
 mod manager;
@@ -56,3 +56,58 @@ impl Command{
     }
 }
 */
+
+use crate::color::*;
+pub type PinConfig = (u8,u8,u8);
+#[cfg(test)]
+use std::sync::{Arc, Mutex};
+
+#[cfg(not(test))]
+use rppal::gpio::OutputPin;
+#[cfg_attr(test,derive(Clone))]
+struct Light{
+    #[cfg(not(test))]
+    red_pin: OutputPin,
+    #[cfg(not(test))]
+    green_pin: OutputPin,
+    #[cfg(not(test))]
+    blue_pin: OutputPin,
+
+    #[cfg(test)]
+    color:Arc<Mutex<Color>>
+}
+
+impl Light{
+    #[cfg(not(test))]
+    pub fn new(config:PinConfig)->Result<Self,Box<dyn Error>>{
+        let mut light = Light{
+            red_pin:Gpio::new()?.get(red)?.into_output(),
+            green_pin:Gpio::new()?.get(green)?.into_output(),
+            blue_pin:Gpio::new()?.get(blue)?.into_output(),
+        };
+        light.set(BLACK);
+        light
+    }
+    #[cfg(test)]
+    pub fn mock()->Self{
+        Light{
+            color:Arc::new(Mutex::new(BLACK)),
+        }
+    }
+    fn set(&mut self,color:Color){
+        #[cfg(test)]{
+            *self.color.lock().unwrap() = color;
+        }
+        #[cfg(not(test))]
+        {
+            let set = |pin,intencity| pin.set_pwm_frequency(FREQUENCY,intencity)?;
+            set(self.red_pin, color.red());
+            set(self.blue_pin, color.blue());
+            set(self.green_pin, color.green());
+        }
+    }
+    #[cfg(test)]
+    fn color(&self)->Color{
+        *self.color.lock().unwrap()
+    }
+}

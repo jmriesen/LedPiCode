@@ -15,24 +15,21 @@ pub use mock::*;
 #[cfg(not(test))]
 pub use hardware::*;
 
-pub struct MockPhantom;
 #[cfg(test)]
 mod mock{
     use super::*;
     use crate::color::{Color,BLACK};
-    pub struct Strip<Manager> {
+    pub struct Strip {
         color:Arc<Mutex<Color>>,
-        phantom:PhantomData<Manager>,
     }
 
-    pub fn new<Manager>((_red,_green,_blue):PinConfig)->Result<Strip<Manager>,Box<dyn Error>>{
+    pub fn new((_red,_green,_blue):PinConfig)->Result<Strip,Box<dyn Error>>{
         Ok(Strip{
-            phantom:PhantomData,
             color:Arc::new(Mutex::new(BLACK)),
         })
     }
 
-    impl <Manager>Controls for Strip<Manager>{
+    impl Controls for Strip{
         fn set(&mut self,color:Color){
             let mut c = self.color.lock().unwrap();
             *c = color;
@@ -42,7 +39,7 @@ mod mock{
             Ok(())
         }
     }
-    impl Strip<MockPhantom>{
+    impl Strip{
         pub fn mock()->(Self,Arc<Mutex<Color>>){
             let strip = new((0,0,0)).unwrap();
             let internal = strip.color.clone();

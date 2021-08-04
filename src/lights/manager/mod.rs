@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests;
-use super::{Strip,strip::Controls};
+use super::{Light};
 use super::commands::{Pattern,Command};
 use std::time::Instant;
 use crate::color::*;
@@ -8,17 +8,17 @@ use crate::color::*;
 use std::collections::HashMap;
 use crate::time::{Updatable,TimeSourceHandle};
 use std::sync::{Arc, Mutex};
-struct Manager<TEMP,TIMEHANDLE:TimeSourceHandle>{
-    lights:HashMap<String,(Strip<TEMP>,Option<Command>)>,
+struct Manager<TIMEHANDLE:TimeSourceHandle>{
+    lights:HashMap<String,(Light,Option<Command>)>,
     time_source:TIMEHANDLE,
 
 }
 
-impl<TEMP: 'static,TIMEHANDLE:TimeSourceHandle> Manager<TEMP,TIMEHANDLE>{
-    fn new(lights:HashMap<String,Strip<TEMP>>,time_source:TIMEHANDLE)->Arc<Mutex<Self>>{
+impl<TIMEHANDLE:TimeSourceHandle> Manager<TIMEHANDLE>{
+    fn new(lights:HashMap<String,Light>,time_source:TIMEHANDLE)->Arc<Mutex<Self>>{
         let lights  = lights
             .into_iter()
-            .map(|(_name, strip)|(_name,(strip,None)))
+            .map(|(_name, light)|(_name,(light,None)))
             .collect();
 
         let manager = Arc::new(Mutex::new(Manager{lights,time_source:time_source.clone()}));
@@ -33,7 +33,7 @@ impl<TEMP: 'static,TIMEHANDLE:TimeSourceHandle> Manager<TEMP,TIMEHANDLE>{
         Ok(())
     }
 }
-impl<TEMP,TIMEHANDLE:TimeSourceHandle> Updatable for Manager<TEMP,TIMEHANDLE>{
+impl<TIMEHANDLE:TimeSourceHandle> Updatable for Manager<TIMEHANDLE>{
     fn update(&mut self,time:Instant){
         for (light,command) in self.lights.values_mut(){
             if let Some(command) = command{

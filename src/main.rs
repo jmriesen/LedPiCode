@@ -6,16 +6,17 @@ use std::sync::Arc;
 // Gpio uses BCM pin numbering. BCM GPIO 23 is tied to physical pin 16.
 
 mod color;
-pub mod controler;
-pub use controler::RocketManager;
+//pub mod controler;
+//pub use controler::RocketManager;
 
 pub mod time;
 
 mod lights;
 use lights::{
-    light_manager::LightManager,
+    //light_manager::LightManager,
 };
 fn main() -> Result<(), Box<dyn Error>> {
+    /*
     let manager:Arc<Mutex<LightManager<RocketManager>>> = LightManager::new();
     {
         let mut  manager = manager.lock().unwrap();
@@ -31,6 +32,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         .mount("/led/", controler::endpoints())
         .mount("/led/examples/", controler::examples())
         .launch();
+     */
     Ok(())
 }
 
