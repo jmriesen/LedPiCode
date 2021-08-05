@@ -38,7 +38,7 @@ impl Color{
 
 impl From<[f64;4]> for Color{
     fn from(color:[f64;4])->Self{
-        let mut arr = [0 as u8;4];
+        let mut arr = [0_u8;4];
         for i in 0..arr.len(){
             arr[i] = (color[i].clamp(0.,1.)*COLOR_MAX) as u8;
         }

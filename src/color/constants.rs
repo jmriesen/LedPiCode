@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use super::*;
 pub const BLACK:Color = Color([0,0,0,0xff]);
 pub const WHITE:Color = Color([0xff,0xff,0xff,0xff]);

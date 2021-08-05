@@ -30,7 +30,7 @@ impl Command{
             match &self.pattern{
                 Constent(color) => Some(*color),
                 EvenCycle(cycle,duration) => {
-                    if cycle.len() ==  0{
+                    if cycle.is_empty(){
                         None
                     }else{
                         let elaps = time-self.start;

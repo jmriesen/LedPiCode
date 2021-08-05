@@ -30,7 +30,7 @@ impl<TIMEHANDLE:TimeSourceHandle> Manager<TIMEHANDLE>{
     fn command(&mut self,name:&str,pattern:Pattern)->Result<(),&'static str>{
         let (_light,command) = self.lights.get_mut(name).ok_or("name not found")?;
         let current_time = self.time_source.now();
-            *command = Some(pattern.start(current_time.clone()));
+            *command = Some(pattern.start(current_time));
         self.update(current_time);
         Ok(())
     }

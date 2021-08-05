@@ -21,6 +21,12 @@ fn even_cycle_should_change_colors(){
     }
 }
 #[test]
+fn empty_cycle_should_returen_none(){
+    let command = EvenCycle(vec![],Duration::new(2, 0)).start(Instant::now());
+    let start = Instant::now();
+    assert_eq!(command.get(start + Duration::new(1, 0)),None);
+}
+#[test]
 fn times_before_start_should_return_none(){
     let time = Instant::now();
     let command = Constent(RED).start(Instant::now());

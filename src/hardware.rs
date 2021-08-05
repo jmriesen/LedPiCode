@@ -11,6 +11,7 @@ pub struct MockOutputPin{
     intencity:Arc<Mutex<f64>>
 }
 impl MockOutputPin{
+    #[cfg(test)]
     pub fn intencity(&self)->f64{
         *self.intencity.lock().unwrap()
     }
@@ -29,7 +30,8 @@ pub fn mock_pin()->OutputPin{
 }
 
 #[cfg(not(test))]
-fn new_OutputPin(numb:u8)->OutputPin{
+#[allow(unused_variables)]
+fn new_output_pin(numb:u8)->OutputPin{
     #[cfg(target_os = "macos")]
     {
         MockOutputPin::new()
