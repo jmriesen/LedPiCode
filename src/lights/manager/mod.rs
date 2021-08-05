@@ -6,17 +6,17 @@ use std::time::Instant;
 use crate::color::*;
 
 use std::collections::HashMap;
-use crate::time::{Updatable,TimeSourceHandle};
+use crate::time::{Updatable,TimeHandle,TimeSourceHandle};
 use std::sync::{Arc, Mutex};
 
-struct Manager<TIMEHANDLE:TimeSourceHandle>{
+struct Manager{
     lights:HashMap<String,(Light,Option<Command>)>,
-    time_source:TIMEHANDLE,
+    time_source:TimeHandle,
 
 }
 
-impl<TIMEHANDLE:TimeSourceHandle> Manager<TIMEHANDLE>{
-    fn new(lights:HashMap<String,Light>,time_source:TIMEHANDLE)->Arc<Mutex<Self>>{
+impl Manager{
+    fn new(lights:HashMap<String,Light>,time_source:TimeHandle)->Arc<Mutex<Self>>{
         let lights  = lights
             .into_iter()
             .map(|(_name, light)|(_name,(light,None)))
@@ -35,7 +35,7 @@ impl<TIMEHANDLE:TimeSourceHandle> Manager<TIMEHANDLE>{
         Ok(())
     }
 }
-impl<TIMEHANDLE:TimeSourceHandle> Updatable for Manager<TIMEHANDLE>{
+impl Updatable for Manager{
     fn update(&mut self,time:Instant){
         for (light,command) in self.lights.values_mut(){
             if let Some(command) = command{

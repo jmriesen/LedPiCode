@@ -4,7 +4,29 @@ use std::sync::{Arc, Mutex};
 #[cfg(test)]
 pub mod mock;
 
+#[cfg(test)]
+pub type TimeHandle = mock::MockTimeHandle;
+
+#[cfg(not(test))]
 pub mod real;
+
+
+#[cfg(not(test))]
+type TimeHandle = real::RealTimeHandle;
+
+impl TimeHandle {
+    fn new()->Self{
+        #[cfg(not(test))]
+        {
+            real::RealTimeHandle
+        }
+        #[cfg(test)]
+        {
+            mock::new_mock_time_source()
+        }
+    }
+}
+
 pub trait Updatable:Send{
     fn update(&mut self,time:Instant);
 }

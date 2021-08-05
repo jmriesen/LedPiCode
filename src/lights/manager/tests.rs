@@ -3,7 +3,7 @@ use std::time::Duration;
 use crate::time::mock::{MockTimeHandle,new_mock_time_source};
 use super::super::PinConfig;
 fn setup()->
-    (MockTimeHandle, PinConfig, Arc<Mutex<Manager<MockTimeHandle>>>){
+    (MockTimeHandle, PinConfig, Arc<Mutex<Manager>>){
         let (pins,light) = super::super::tests::setup_light_for_testing();
         let time_handle = new_mock_time_source();
         let mut lights = HashMap::default();
