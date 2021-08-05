@@ -1,4 +1,5 @@
 use super::*;
+use std::time::Duration;
 
 #[derive(Clone)]
 pub struct MockTimeHandle{

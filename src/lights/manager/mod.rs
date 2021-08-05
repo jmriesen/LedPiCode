@@ -8,6 +8,7 @@ use crate::color::*;
 use std::collections::HashMap;
 use crate::time::{Updatable,TimeSourceHandle};
 use std::sync::{Arc, Mutex};
+
 struct Manager<TIMEHANDLE:TimeSourceHandle>{
     lights:HashMap<String,(Light,Option<Command>)>,
     time_source:TIMEHANDLE,
@@ -21,7 +22,8 @@ impl<TIMEHANDLE:TimeSourceHandle> Manager<TIMEHANDLE>{
             .map(|(_name, light)|(_name,(light,None)))
             .collect();
 
-        let manager = Arc::new(Mutex::new(Manager{lights,time_source:time_source.clone()}));
+        let manager = Arc::new(Mutex::new(
+            Manager{lights,time_source:time_source.clone()}));
         time_source.spawn_update_loop(manager.clone());
         manager
     }
@@ -37,7 +39,7 @@ impl<TIMEHANDLE:TimeSourceHandle> Updatable for Manager<TIMEHANDLE>{
     fn update(&mut self,time:Instant){
         for (light,command) in self.lights.values_mut(){
             if let Some(command) = command{
-                light.set(command.get(time).unwrap_or(BLACK));
+                let _ = light.set(command.get(time).unwrap_or(BLACK));
             }
         }
     }

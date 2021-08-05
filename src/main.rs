@@ -1,8 +1,8 @@
-#![feature(div_duration,proc_macro_hygiene, decl_macro)]
-#[macro_use] extern crate rocket;
-use std::sync::Mutex;
+//#![feature(div_duration,proc_macro_hygiene, decl_macro)]
+//#[macro_use] extern crate rocket;
+//use std::sync::Mutex;
 use std::error::Error;
-use std::sync::Arc;
+//use std::sync::Arc;
 // Gpio uses BCM pin numbering. BCM GPIO 23 is tied to physical pin 16.
 
 mod color;
@@ -10,11 +10,12 @@ mod color;
 //pub use controler::RocketManager;
 
 pub mod time;
+mod hardware;
 
 mod lights;
-use lights::{
+//use lights::{
     //light_manager::LightManager,
-};
+//};
 fn main() -> Result<(), Box<dyn Error>> {
     /*
     let manager:Arc<Mutex<LightManager<RocketManager>>> = LightManager::new();

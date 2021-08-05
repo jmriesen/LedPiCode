@@ -14,7 +14,6 @@ use Pattern::*;
 
 impl Pattern{
     pub fn start(self,time:Instant)->Command{
-        //TODO I think I need to introduce a time source.
         Command{start:time,pattern:self}
     }
 }
@@ -47,14 +46,11 @@ impl Command{
         }
     }
 }
-    //TODO this is not efficient and could be optimized later
     fn div(mut numerator:Duration,divisor:&Duration)-> usize{
-        println!("devision num:{:?} divisor:{:?}:",numerator,divisor);
         let mut iteration = 0;
         while numerator>= *divisor{
             iteration +=1;
             numerator -= *divisor;
         }
-        println!("result:{}",iteration);
         iteration
     }
