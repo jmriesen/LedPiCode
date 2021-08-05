@@ -2,7 +2,9 @@ use std::sync::{Arc,Mutex};
 //use rppal::gpio::{OutputPin,Gpio};
 
 #[cfg(not(any(test,target_os = "macos")))]
-pub type OutputPin = rppal::gpio::OutputPin;
+pub struct RealPin(rppal::gpio::OutputPin);
+#[cfg(not(any(test,target_os = "macos")))]
+pub type OutputPin = RealPin;
 #[cfg(any(test,target_os = "macos"))]
 pub type OutputPin = MockOutputPin;
 
@@ -38,16 +40,17 @@ fn new_output_pin(numb:u8)->OutputPin{
     }
     #[cfg(not(target_os = "macos"))]
     {
-        Gpio::new()?.get(red)?.into_output()
+        use::rppal::gpio::Gpio;
+        RealPin(Gpio::new().unwrap().get(numb).unwrap().into_output())
     }
 }
-
 
 impl OutputPin{
     pub fn pwm(&mut self, duty_cycle: f64){
         #[cfg(not(any(test,target_os = "macos")))]
         {
-            let _ = self.set_pwm_frequency(FREQUENCY,duty_cycle);
+            let frequency =  100.0;
+            let _ = self.0.set_pwm_frequency(frequency,duty_cycle);
         }
         #[cfg(any(test,target_os = "macos"))]
         {
