@@ -10,13 +10,14 @@ export default class App extends Component {
     }
     constructor() {
         super();
-        fetch('http://192.168.1.17:8000/led/group', {
+        fetch('http://192.168.1.17:8000/status', {
             method: 'GET'
         })
             .then((response) =>response.json())
             .then((responseJson) => {
                 this.setState({ taskItems:responseJson });
                 console.log(responseJson);
+                console.log(responseJson[0][0]);
             })
             .catch((error) => {
                 console.error(error);
@@ -36,7 +37,7 @@ export default class App extends Component {
               <FlatList
                 data={this.state.taskItems}
                 renderItem={({item}) => <Task data={item} color={this.state.color} /> }
-                keyExtractor={(item,index) =>item.name}
+                keyExtractor={(item,index) =>item[1]+index}//Name
 
               />
             </View>

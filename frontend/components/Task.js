@@ -5,21 +5,27 @@ import ToggleSwitch from 'toggle-switch-react-native';
 const Task = (props) =>{
     const [light,setlight] = useState(props.data);
     const [selected,setSelected] = useState(false);
-    const [color,setColor] = useState(props.data.pattern.Constent.target);
+    const [color,setColor] = useState(props.data[1]);//.pattern.Constent.target);
 
     const getColor = (data) => {
-        return data.pattern.Constent.target;
+        return data[1];//.pattern.Constent.target;
     };
 
+    //This stuff will break.
     const toggal= ()=>{
-        fetch('http://192.168.1.17:8000/led/'+
-              (light.on ? 'off':'on')+'/'+light.name,
+        var url = 'http://192.168.1.17:8000/'+
+            ((light[1]!="#000000ff")? 'off':'on')+'/'+light[0];
+        fetch(url,
               {
-                  method: 'PUT'
+                  method: 'POST'
               })
-            .then((response) =>response.json())
+            .then((response) =>{
+                return response.json();
+            })
             .then((responseJson) => {
+                console.log("should be"+responseJson);
                 setlight(responseJson);
+                console.log("is "+light);
             })
             .catch((error) => {
                 console.error(error);
@@ -28,10 +34,13 @@ const Task = (props) =>{
     const update_color = (props)=>{
         if (selected && props.color && props.color != color){
             setColor(props.color);
-            fetch('http://192.168.1.17:8000/led/group/'+light.name,
+            fetch('http://192.168.1.17:8000/set/'+light[0],//.name,
                   {
-                      method: 'PUT',
-                      body: JSON.stringify({
+                      method: 'Post',
+                      body: JSON.stringify(
+                          props.color
+                          /*
+                          {
                           "Constent": {
                               "target": props.color,
                               "fade_time": {
@@ -40,6 +49,7 @@ const Task = (props) =>{
                               }
                           }
                       }
+                          */
                                           )})
                 .then((response) =>response.json())
                 .then((responseJson) => {
@@ -53,7 +63,7 @@ const Task = (props) =>{
     };
     update_color(props);
     return (
-        <View style={[styles.item,{backgroundColor:color}]}>
+        <View style={[styles.item,{backgroundColor:light[1]}]}>
           <View style={styles.itemLeft}>
             <CheckBox
               style={styles.square}
@@ -62,10 +72,10 @@ const Task = (props) =>{
               }}
               isChecked={selected}
             />
-            <Text>{props.data.name}</Text>
+            <Text>{props.data[0]/*.name*/}</Text>
           </View>
           <ToggleSwitch
-            isOn={light.on}
+            isOn={light[1]!="#000000ff"}//.on}
             onColor="green"
             offColor="red"
             size="large"
