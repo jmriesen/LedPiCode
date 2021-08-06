@@ -1,5 +1,5 @@
-mod commands;
-mod manager;
+pub mod commands;
+pub mod manager;
 mod config;
 #[cfg(test)]
 mod tests;

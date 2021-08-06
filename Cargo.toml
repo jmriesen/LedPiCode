@@ -7,14 +7,11 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-rocket = "0.5.0-rc.1"
+rocket = {version = "0.5.0-rc.1", features = ["json"]}
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 hex = "0.4.3"
-[dependencies.rocket_contrib]
-version = "0.4.6"
-default-features = false
-features = ["json"]
+
 
 [target.'cfg(not(target_os = "macos"))'.dependencies]
 rppal = "0.11.3"

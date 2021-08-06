@@ -1,4 +1,3 @@
-
 #[cfg(test)]
 mod tests;
 
@@ -72,7 +71,12 @@ mod test{
         let target  = Color([1,2,3,255]);
         assert_eq!(Color([2,4,6,255]),current.move_toward(target,2.0));
     }
-
+}
+use std::fmt;
+impl fmt::Display for Color {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f,"#{}",hex::encode(self.0))
+    }
 }
 
 mod serialization{
@@ -84,8 +88,7 @@ mod serialization{
         where
             S: Serializer,
         {
-            let hex = format!("#{}",hex::encode(self.0));
-            hex.serialize(serializer)
+            format!("{}",self).serialize(serializer)
         }
     }
 

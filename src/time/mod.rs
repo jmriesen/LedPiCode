@@ -12,10 +12,10 @@ pub mod real;
 
 
 #[cfg(not(test))]
-type TimeHandle = real::RealTimeHandle;
+pub type TimeHandle = real::RealTimeHandle;
 
 impl TimeHandle {
-    fn new()->Self{
+    pub fn new()->Self{
         #[cfg(not(test))]
         {
             real::RealTimeHandle

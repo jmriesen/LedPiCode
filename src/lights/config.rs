@@ -7,6 +7,17 @@ pub struct PinConfig{
     pub blue:OutputPin,
 }
 
+impl From<(u8,u8,u8)> for PinConfig{
+    fn from((red,green,blue): (u8,u8,u8)) -> Self {
+        use crate::hardware::new_output_pin;
+            Self{
+                red:new_output_pin(red),
+                green:new_output_pin(green),
+                blue:new_output_pin(blue),
+            }
+    }
+}
+
 #[cfg(test)]
 pub use test::*;
 #[cfg(test)]

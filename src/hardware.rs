@@ -31,14 +31,13 @@ pub fn mock_pin()->OutputPin{
     MockOutputPin::new()
 }
 
-#[cfg(not(test))]
 #[allow(unused_variables)]
-fn new_output_pin(numb:u8)->OutputPin{
-    #[cfg(target_os = "macos")]
+pub fn new_output_pin(numb:u8)->OutputPin{
+    #[cfg(any(test,target_os = "macos"))]
     {
         MockOutputPin::new()
     }
-    #[cfg(not(target_os = "macos"))]
+    #[cfg(not(any(test,target_os = "macos")))]
     {
         use::rppal::gpio::Gpio;
         RealPin(Gpio::new().unwrap().get(numb).unwrap().into_output())

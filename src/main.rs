@@ -1,22 +1,20 @@
-//#![feature(div_duration,proc_macro_hygiene, decl_macro)]
-//#[macro_use] extern crate rocket;
-//use std::sync::Mutex;
+#![feature(div_duration,proc_macro_hygiene, decl_macro,iter_intersperse)]
+#[macro_use] extern crate rocket;
 use std::error::Error;
-//use std::sync::Arc;
-// Gpio uses BCM pin numbering. BCM GPIO 23 is tied to physical pin 16.
 
 mod color;
-//pub mod controler;
-//pub use controler::RocketManager;
-
 pub mod time;
 mod hardware;
+mod web;
+
+use std::collections::HashMap;
+use time::TimeHandle;
+use lights::manager::Manager;
+use lights::Light;
 
 mod lights;
-//use lights::{
-    //light_manager::LightManager,
-//};
-fn main() -> Result<(), Box<dyn Error>> {
+#[rocket::main]
+async fn main() -> Result<(), Box<dyn Error>> {
     /*
     let manager:Arc<Mutex<LightManager<RocketManager>>> = LightManager::new();
     {
@@ -25,15 +23,15 @@ fn main() -> Result<(), Box<dyn Error>> {
         let led_jacob = manager.create_strip("Jacob".to_string(),(27,22,17))?;
         let led_ben   = manager.create_strip("Ben".to_string(),(25,24,23))?;
         let led_night = manager.create_strip("night_light".to_string(),(13,6,5))?;
-
-        let _ = manager.create_group(String::from("All"),vec![led_jacob,led_ben,led_night]);
-    }
-    rocket::ignite()
-        .manage(manager)
-        .mount("/led/", controler::endpoints())
-        .mount("/led/examples/", controler::examples())
-        .launch();
      */
+
+    let mut lights = HashMap::default();
+    lights.insert("light1".into(),Light::new((27,22,17).into()));
+    lights.insert("light2".into(),Light::new((25,24,23).into()));
+    lights.insert("light3".into(),Light::new((13,6,5).into()));
+    let time_handle = TimeHandle::new();
+    let manager = Manager::new(lights,time_handle);
+    web::rocket(manager).launch().await;
     Ok(())
 }
 
