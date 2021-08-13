@@ -1,0 +1,9 @@
+[Unit]
+Description=Frontend for lights (running in port 8000)
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/hardware_projects/led_lights/frontend
+ExecStart=expo start
+

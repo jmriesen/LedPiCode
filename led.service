@@ -1,0 +1,9 @@
+[Unit]
+Description=Backend for lights (running in port 8000)
+ 
+[Service]
+Type=simple
+EnvironmentFile=/home/pi/hardware_projects/led_lights/EnvironmentFile
+ExecStart=/home/pi/hardware_projects/led_lights/backend/target/release/led_lights
+
+Restart=always
