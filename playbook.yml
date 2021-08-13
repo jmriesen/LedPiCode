@@ -1,0 +1,58 @@
+---
+- hosts: all
+  tasks:
+  - name: nvm
+    shell: >
+      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+    args:
+      creates: "{{ ansible_env.HOME }}/.nvm/nvm.sh"
+  - name: cargo install
+    shell: >
+      curl https://sh.rustup.rs -sSf | sh
+    args:
+      creates: "{{ ansible_env.HOME }}/.cargo/bin/cargo"
+    register: cargo
+
+  - name: cargo set to nightly
+    when: cargo.changed
+    shell: >
+      rustup default nightly
+
+  - name: Install packages based on package.json using the npm installed with nvm v0.38.1.
+    npm:
+      path: ~/hardware_projects/led_lights/frontend
+      executable: /home/pi/.nvm/versions/node/v16.6.1/bin/npm
+      state: present
+  - name: Git checkout
+    ansible.builtin.git:
+      repo: "https://github.com/jmriesen/LedPiCode.git"
+      dest: /home/pi/hardware_projects/led_lights/
+    register: git
+
+  - name: Copy led backend service systemd folder
+    become: yes
+    when: git.changed
+    ansible.builtin.copy:
+      src: /home/pi/hardware_projects/led_lights/led.service
+      dest: /etc/systemd/system/led.service
+      remote_src: yes
+  - name: Copy led fronted service systemd folder
+    become: yes
+    when: git.changed
+    ansible.builtin.copy:
+      src: /home/pi/hardware_projects/led_lights/led-frontend.service
+      dest: /etc/systemd/system/led-frontend.service
+      remote_src: yes
+
+  - name: starting backend
+    become: yes
+    when: git.changed
+    service:
+      name: led
+      state: restarted
+  - name: starting frontend
+    become: yes
+    when: git.changed
+    service:
+      name: led-frontend
+      state: restarted
