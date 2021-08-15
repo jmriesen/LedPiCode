@@ -5,5 +5,5 @@ Description=Frontend for lights (running in port 8000)
 Type=simple
 User=pi
 WorkingDirectory=/home/pi/hardware_projects/led_lights/frontend
-ExecStart=expo start
+ExecStart=/home/pi/.nvm/versions/node/v16.6.1/bin/npmstart
 

@@ -1,28 +1,36 @@
 ---
 - hosts: all
   tasks:
-  - name: nvm
+    #Setting up build chain
+  - name: install nvm
     shell: >
       curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
     args:
       creates: "{{ ansible_env.HOME }}/.nvm/nvm.sh"
+      # symbolic links may be needed for the service keep that in mind.
+  - name: install npm
+    shell: >
+      source {{ ansible_env.HOME }}/.nvm/nvm.sh && nvm install 16.6.1
+    args:
+      creates: "{{ ansible_env.HOME }}/.nvm/versions/node/v16.6.1/bin/npm"
+      executable: /bin/bash
+  - name: symbolic link node 
+    shell: >
+      sudo ln -s {{ ansible_env.HOME }}/.nvm/versions/node/v16.6.1/bin/node /usr/bin/node
+    args:
+      executable: /bin/bash
+
   - name: cargo install
     shell: >
-      curl https://sh.rustup.rs -sSf | sh
+      curl https://sh.rustup.rs -sSf | sh -s - -y
     args:
       creates: "{{ ansible_env.HOME }}/.cargo/bin/cargo"
     register: cargo
 
   - name: cargo set to nightly
-    when: cargo.changed
     shell: >
-      rustup default nightly
-
-  - name: Install packages based on package.json using the npm installed with nvm v0.38.1.
-    npm:
-      path: ~/hardware_projects/led_lights/frontend
-      executable: /home/pi/.nvm/versions/node/v16.6.1/bin/npm
-      state: present
+      {{ ansible_env.HOME }}/.cargo/bin/rustup default nightly
+# Install latest version of the files.
   - name: Git checkout
     ansible.builtin.git:
       repo: "https://github.com/jmriesen/LedPiCode.git"
@@ -36,6 +44,7 @@
       src: /home/pi/hardware_projects/led_lights/led.service
       dest: /etc/systemd/system/led.service
       remote_src: yes
+
   - name: Copy led fronted service systemd folder
     become: yes
     when: git.changed
@@ -43,13 +52,32 @@
       src: /home/pi/hardware_projects/led_lights/led-frontend.service
       dest: /etc/systemd/system/led-frontend.service
       remote_src: yes
-
+# Backend Setup
+  - name: compiling back end
+    when: git.changed
+    shell: >
+      cargo build --release
+ 
   - name: starting backend
     become: yes
     when: git.changed
     service:
       name: led
       state: restarted
+# Fronted setup 
+  # - name: Install packages based on package.json.
+  #   npm:
+  #     ci: yes 
+  #     path: "{{ ansible_env.HOME }}/hardware_projects/led_lightss/frontend"
+  #     executable: "{{ ansible_env.HOME }}/.nvm/versions/node/v16.6.1/bin/npm"
+  #     state: present
+  - name: Install packages based on package.json.
+    shell: >
+      {{ ansible_env.HOME }}/.nvm/versions/node/v16.6.1/bin/npm -v
+    args:
+      chdir: "{{ ansible_env.HOME }}/hardware_projects/led_lightss/frontend"
+
+      #{{ ansible_env.HOME }}/.nvm/versions/node/v16.6.1/bin/npm install
   - name: starting frontend
     become: yes
     when: git.changed
