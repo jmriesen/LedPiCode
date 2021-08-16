@@ -15,10 +15,10 @@
       creates: "{{ ansible_env.HOME }}/.nvm/versions/node/v16.6.1/bin/npm"
       executable: /bin/bash
   - name: symbolic link node 
-    shell: >
-      sudo ln -s {{ ansible_env.HOME }}/.nvm/versions/node/v16.6.1/bin/node /usr/bin/node
-    args:
-      executable: /bin/bash
+    file: 
+      src: "{{ ansible_env.HOME }}/.nvm/versions/node/v16.6.1/bin/node" 
+      dest: /usr/bin/node
+      state: link
 
   - name: cargo install
     shell: >
@@ -39,7 +39,7 @@
 
   - name: Copy led backend service systemd folder
     become: yes
-    when: git.changed
+#    when: git.changed
     ansible.builtin.copy:
       src: /home/pi/hardware_projects/led_lights/led.service
       dest: /etc/systemd/system/led.service
@@ -47,20 +47,22 @@
 
   - name: Copy led fronted service systemd folder
     become: yes
-    when: git.changed
+#    when: git.changed
     ansible.builtin.copy:
       src: /home/pi/hardware_projects/led_lights/led-frontend.service
       dest: /etc/systemd/system/led-frontend.service
       remote_src: yes
 # Backend Setup
   - name: compiling back end
-    when: git.changed
+#    when: git.changed
     shell: >
-      cargo build --release
+      {{ ansible_env.HOME }}/.cargo/bin/cargo build --release
+    args:
+      chdir: "{{ ansible_env.HOME }}/hardware_projects/led_lights/backend"
  
   - name: starting backend
     become: yes
-    when: git.changed
+#    when: git.changed
     service:
       name: led
       state: restarted
@@ -73,14 +75,14 @@
   #     state: present
   - name: Install packages based on package.json.
     shell: >
-      {{ ansible_env.HOME }}/.nvm/versions/node/v16.6.1/bin/npm -v
+      {{ ansible_env.HOME }}/.nvm/versions/node/v16.6.1/bin/npm install
     args:
-      chdir: "{{ ansible_env.HOME }}/hardware_projects/led_lightss/frontend"
+      chdir: "{{ ansible_env.HOME }}/hardware_projects/led_lights/frontend"
 
       #{{ ansible_env.HOME }}/.nvm/versions/node/v16.6.1/bin/npm install
   - name: starting frontend
     become: yes
-    when: git.changed
+#    when: git.changed
     service:
       name: led-frontend
       state: restarted
