@@ -47,3 +47,7 @@ fn should_be_able_to_set_one_light()->Result<(),Box<dyn Error>>{
 
     Ok(())
 }
+#[test]
+fn should_regect_unknown_names(){
+    todo!();
+}
