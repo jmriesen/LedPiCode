@@ -5,26 +5,23 @@ import ToggleSwitch from 'toggle-switch-react-native';
 
 import {Light, black,white} from './light';
 const Light_Ui = (props:any) =>{
-    const [light,setlight] = useState(Light.from_data(props.data));
-    const [selected,setSelected] = useState(false);
     const [update_toggle,set_update] = useState(false);
+    let light = props.data;
 
     const update = ()=>{
         set_update(!update_toggle);
     }
 
-    if (selected && props.color && props.color != light.get_color()){
-        light.set_color(props.color).then(update)
-    }
     return (
         <View style={[styles.item,{backgroundColor:light.get_color()}]}>
           <View style={styles.itemLeft}>
             <CheckBox
               style={styles.square}
               onClick={()=>{
-                  setSelected(!selected);
+                  props.manager.select_toggle(light);
+                  update();
               }}
-              isChecked={selected}
+                isChecked={props.manager.is_selected(light)}
             />
             <Text>{light.get_name()}</Text>
           </View>
