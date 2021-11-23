@@ -1,10 +1,17 @@
 import 'jest';
 import {Light, black,white} from './light';
 
+global.fetch = require('jest-fetch-mock');
+
 beforeAll(() => {
     //TODO mocking needs to be added
     Light.base_url = 'http://localhost:8000/';
 });
+
+beforeEach(() => {
+    global.fetch.resetMocks();
+});
+
 test('should be able to construct light from backend data',() =>{
     let light_data=  [
         "light1",
